@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초등 3학년 즐거운 영어 단어 모험 🎈</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50E3C2;
+            --accent: #FFB300;
+            --dark: #2C3E50;
+            --light: #F8FAFC;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', 'Comic Sans MS', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #E0C3FC 0%, #8EC5FC 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            color: var(--dark);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 4px solid #fff;
+            position: relative;
+            min-height: 660px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: #FFF;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #E2E8F0;
+        }
+
+        .home-btn {
+            background: var(--light);
+            border: 2px solid #CBD5E1;
+            border-radius: 12px;
+            padding: 6px 14px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .score-board {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #FF6B6B;
+            background: #FFF0F0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 2px solid #FFD8D8;
+        }
+
+        /* Main Content Views */
+        .view {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        /* Title Screen */
+        .title-screen h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .title-screen p {
+            font-size: 1.05rem;
+            color: #64748B;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .stage-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .stage-card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 10px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border: 3px solid #E2E8F0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .stage-number {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #94A3B8;
+        }
+
+        .stage-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--dark);
+        }
+
+        .stage-stars {
+            font-size: 1.2rem;
+            color: #FFB300;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #E2E8F0;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Word Card */
+        .mode-indicator {
+            background: #EBF8FF;
+            color: #2B6CB0;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border: 1px solid #BEE3F8;
+        }
+
+        .word-card {
+            background: white;
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: 25px 20px;
+            text-align: center;
+            border: 3px solid #EDF2F7;
+            margin-bottom: 15px;
+        }
+
+        .word-emoji {
+            font-size: 4.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .word-en {
+            font-size: 2.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .word-kr {
+            font-size: 1.4rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .sound-btn {
+            background: #FFF5F0;
+            border: 2px solid #FFD8C2;
+            color: #DD6B20;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Options for Interleaved Quiz */
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .quiz-opt {
+            background: white;
+            border: 2px solid #E2E8F0;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Buttons */
+        .action-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2B6CB0;
+            transition: all 0.1s;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Sticker Book */
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+            background: #FFF;
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px dashed #CBD5E1;
+        }
+
+        .sticker-slot {
+            aspect-ratio: 1;
+            background: var(--light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            filter: grayscale(100%);
+            opacity: 0.3;
+        }
+
+        .sticker-slot.unlocked {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <button class="home-btn" onclick="showView('title-screen')">🏠 처음으로</button>
+        <div class="score-board">⭐ 스티커 <span id="sticker-count">0</span>/20</div>
+    </header>
+
+    <!-- 1. 메인 스테이지 선택 화면 -->
+    <div id="title-screen" class="view active title-screen">
+        <h1>신나는 영어 단어 모험 🎈</h1>
+        <p>하루에 5개씩 재미있게 따라 해봐요!</p>
+        
+        <div class="stage-grid">
+            <div class="stage-card" onclick="startStage(0)">
+                <div class="stage-number">STAGE 1</div>
+                <div class="stage-title">🐱 귀여운 동물</div>
+                <div class="stage-stars" id="star-0">☆☆☆</div>
+            </div>
+            <div class="stage-card" onclick="startStage(1)">
+                <div class="stage-number">STAGE 2</div>
+                <div class="stage-title">✏️ 내 학용품</div>
+                <div class="stage-stars" id="star-1">☆☆☆</div>
+            </div>
+            <div class="stage-card" onclick="startStage(2)">
+                <div class="stage-number">STAGE 3</div>
+                <div class="stage-title">👨‍👩‍👧 가족과 친구</div>
+                <div class="stage-stars" id="star-2">☆☆☆</div>
+            </div>
+            <div class="stage-card" onclick="startStage(3)">
+                <div class="stage-number">STAGE 4</div>
+                <div class="stage-title">🎨 색상과 상태</div>
+                <div class="stage-stars" id="star-3">☆☆☆</div>
+            </div>
+        </div>
+
+        <button class="action-btn" style="margin-top: 20px; background: #3182CE; box-shadow: 0 4px 0 #2B6CB0;" onclick="showStickerBook()">
+            🎁 내 스티커 북 보기
+        </button>
+    </div>
+
+    <!-- 2. 단어 살펴보기 단계 -->
+    <div id="blocked-screen" class="view">
+        <div class="progress-bar"><div class="progress-fill" id="blocked-progress"></div></div>
+        <div class="mode-indicator" id="blocked-mode-tag">👀 1단계: 단어 살펴보기</div>
+        
+        <div class="word-card">
+            <span class="word-emoji" id="blocked-emoji">🐱</span>
+            <div class="word-en" id="blocked-en">cat</div>
+            <div class="word-kr" id="blocked-kr">고양이</div>
+            <button class="sound-btn" onclick="speakCurrentBlockedWord()">🔊 소리 듣기</button>
+        </div>
+
+        <!-- 단어 확인 미니 퀴즈 -->
+        <div id="blocked-subquiz" style="width: 100%; display: none; margin-bottom: 15px;">
+            <div style="font-size: 1rem; color: #4A5568; margin-bottom: 8px; text-align: center; font-weight: bold;" id="subquiz-title">알맞은 정답을 골라보세요!</div>
+            <div class="quiz-options" id="blocked-options"></div>
+        </div>
+
+        <button class="action-btn" id="blocked-next-btn" onclick="nextBlockedStep()">잘 익혔어요 ➔</button>
+    </div>
+
+    <!-- 3. 재미있는 퀴즈 단계 -->
+    <div id="interleaved-screen" class="view">
+        <div class="progress-bar"><div class="progress-fill" id="interleaved-progress"></div></div>
+        <div class="mode-indicator" style="background: #FFF5F0; color: #DD6B20; border-color: #FFD8C2;">🎯 2단계: 섞어서 퀴즈 풀기!</div>
+        
+        <button class="sound-btn" style="font-size: 1.3rem; padding: 10px 20px; margin-bottom: 10px;" onclick="speakInterleavedWord()">🔊 소리 다시 듣기</button>
+        
+        <div class="quiz-options" id="interleaved-options"></div>
+    </div>
+
+    <!-- 4. 스티커 북 화면 -->
+    <div id="sticker-screen" class="view">
+        <h2 style="color: var(--primary); margin-bottom: 5px;">내가 모은 스티커 🎨</h2>
+        <p style="color: #718096; margin-bottom: 10px;">퀴즈를 맞히면 스티커가 채워져요!</p>
+        <div class="sticker-grid" id="sticker-grid"></div>
+        <button class="action-btn" style="margin-top: 20px;" onclick="showView('title-screen')">돌아가기</button>
+    </div>
+
+    <!-- Modal: 스테이지 완료 보상 -->
+    <div class="modal-overlay" id="reward-modal">
+        <div class="modal-card">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🎉</div>
+            <h2 style="color: var(--primary); margin-bottom: 10px;">참 잘했어요!</h2>
+            <p id="modal-desc" style="color: #4A5568; margin-bottom: 20px;">이번 단계 단어들을 멋지게 다 외웠습니다!</p>
+            <button class="action-btn" onclick="closeRewardModal()">신난다!</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const stages = [
+        {
+            title: "귀여운 동물",
+            words: [
+                { en: "cat", kr: "고양이", emoji: "🐱" },
+                { en: "dog", kr: "강아지", emoji: "🐶" },
+                { en: "bird", kr: "새", emoji: "🐦" },
+                { en: "apple", kr: "사과", emoji: "🍎" },
+                { en: "banana", kr: "바나나", emoji: "🍌" }
+            ]
+        },
+        {
+            title: "내 학용품",
+            words: [
+                { en: "book", kr: "책", emoji: "📖" },
+                { en: "desk", kr: "책상", emoji: "🪑" },
+                { en: "pencil", kr: "연필", emoji: "✏️" },
+                { en: "car", kr: "자동차", emoji: "🚗" },
+                { en: "bus", kr: "버스", emoji: "🚌" }
+            ]
+        },
+        {
+            title: "가족과 친구",
+            words: [
+                { en: "mom", kr: "엄마", emoji: "👩" },
+                { en: "dad", kr: "아빠", emoji: "👨" },
+                { en: "friend", kr: "친구", emoji: "🧑‍🤝‍🧑" },
+                { en: "boy", kr: "남자아이", emoji: "👦" },
+                { en: "girl", kr: "여자아이", emoji: "👧" }
+            ]
+        },
+        {
+            title: "색상과 상태",
+            words: [
+                { en: "red", kr: "빨간색", emoji: "🔴" },
+                { en: "blue", kr: "파란색", emoji: "🔵" },
+                { en: "happy", kr: "행복한", emoji: "😊" },
+                { en: "big", kr: "큰", emoji: "🐘" },
+                { en: "sun", kr: "해", emoji: "☀️" }
+            ]
+        }
+    ];
+
+    let currentStageIndex = 0;
+    let currentWordIndex = 0;
+    let blockedSubStep = 0;
+    let interleavedQueue = [];
+    let currentInterleavedIndex = 0;
+    let learnedWords = new Set();
+    let stageStars = [0, 0, 0, 0];
+
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        updateHeader();
+    }
+
+    function updateHeader() {
+        document.getElementById('sticker-count').innerText = learnedWords.size;
+        stageStars.forEach((stars, idx) => {
+            const el = document.getElementById(`star-${idx}`);
+            if (el) el.innerText = "★".repeat(stars) + "☆".repeat(3 - stars);
+        });
+    }
+
+    function startStage(stageIdx) {
+        currentStageIndex = stageIdx;
+        currentWordIndex = 0;
+        blockedSubStep = 0;
+        showView('blocked-screen');
+        loadBlockedStep();
+    }
+
+    function loadBlockedStep() {
+        const words = stages[currentStageIndex].words;
+        const word = words[currentWordIndex];
+        
+        const progress = ((currentWordIndex) / words.length) * 100;
+        document.getElementById('blocked-progress').style.width = `${progress}%`;
+        
+        const subquiz = document.getElementById('blocked-subquiz');
+        const nextBtn = document.getElementById('blocked-next-btn');
+
+        if (blockedSubStep === 0) {
+            document.getElementById('blocked-mode-tag').innerText = `👀 [${currentWordIndex+1}/${words.length}] 1단계: 그림과 소리 확인하기`;
+            document.getElementById('blocked-emoji').innerText = word.emoji;
+            document.getElementById('blocked-en').innerText = word.en;
+            document.getElementById('blocked-kr').innerText = word.kr;
+            subquiz.style.display = 'none';
+            nextBtn.style.display = 'block';
+            speak(word.en);
+        } else if (blockedSubStep === 1) {
+            document.getElementById('blocked-mode-tag').innerText = `🧩 [${currentWordIndex+1}/${words.length}] 1단계: 뜻 맞히기`;
+            document.getElementById('blocked-kr').innerText = "???";
+            subquiz.style.display = 'block';
+            nextBtn.style.display = 'none';
+            
+            setupBlockedSubOptions(word, 'kr');
+            speak(word.en);
+        } else if (blockedSubStep === 2) {
+            document.getElementById('blocked-mode-tag').innerText = `🎧 [${currentWordIndex+1}/${words.length}] 1단계: 소리 듣고 찾기`;
+            document.getElementById('blocked-emoji').innerText = "❓";
+            document.getElementById('blocked-en').innerText = "???";
+            document.getElementById('blocked-kr').innerText = "???";
+            subquiz.style.display = 'block';
+            nextBtn.style.display = 'none';
+            
+            setupBlockedSubOptions(word, 'en');
+            speak(word.en);
+        }
+    }
+
+    function setupBlockedSubOptions(targetWord, type) {
+        const container = document.getElementById('blocked-options');
+        container.innerHTML = '';
+        
+        let pool = stages[currentStageIndex].words.filter(w => w.en !== targetWord.en);
+        pool.sort(() => Math.random() - 0.5);
+        let opts = [targetWord, pool[0]];
+        opts.sort(() => Math.random() - 0.5);
+
+        opts.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'quiz-opt';
+            btn.innerText = type === 'kr' ? `${opt.emoji} ${opt.kr}` : opt.en;
+            btn.onclick = () => {
+                if (opt.en === targetWord.en) {
+                    btn.style.borderColor = '#48BB78';
+                    btn.style.background = '#F0FFF4';
+                    setTimeout(() => {
+                        blockedSubStep++;
+                        loadBlockedStep();
+                    }, 400);
+                } else {
+                    btn.style.borderColor = '#E53E3E';
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function speakCurrentBlockedWord() {
+        speak(stages[currentStageIndex].words[currentWordIndex].en);
+    }
+
+    function nextBlockedStep() {
+        blockedSubStep = 1;
+        loadBlockedStep();
+    }
+
+    function startInterleavedPhase() {
+        showView('interleaved-screen');
+        
+        interleavedQueue = [...stages[currentStageIndex].words];
+        
+        if (currentStageIndex > 0) {
+            const prevStage = stages[currentStageIndex - 1];
+            const randomPrevWord = prevStage.words[Math.floor(Math.random() * prevStage.words.length)];
+            interleavedQueue.push(randomPrevWord);
+        }
+
+        interleavedQueue.sort(() => Math.random() - 0.5);
+        currentInterleavedIndex = 0;
+        
+        loadInterleavedQuiz();
+    }
+
+    function loadInterleavedQuiz() {
+        const currentWord = interleavedQueue[currentInterleavedIndex];
+        
+        const progress = ((currentInterleavedIndex + 1) / interleavedQueue.length) * 100;
+        document.getElementById('interleaved-progress').style.width = `${progress}%`;
+
+        const container = document.getElementById('interleaved-options');
+        container.innerHTML = '';
+
+        let pool = stages.flatMap(s => s.words).filter(w => w.en !== currentWord.en);
+        pool.sort(() => Math.random() - 0.5);
+        let options = [currentWord, pool[0], pool[1]];
+        options.sort(() => Math.random() - 0.5);
+
+        options.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'quiz-opt';
+            btn.innerHTML = `<span>${opt.emoji} ${opt.kr}</span> <span>➔</span>`;
+            btn.onclick = () => handleInterleavedAnswer(opt.en === currentWord.en, btn);
+            container.appendChild(btn);
+        });
+
+        speak(currentWord.en);
+    }
+
+    function speakInterleavedWord() {
+        speak(interleavedQueue[currentInterleavedIndex].en);
+    }
+
+    function handleInterleavedAnswer(isCorrect, btn) {
+        if (isCorrect) {
+            btn.style.borderColor = '#48BB78';
+            btn.style.background = '#F0FFF4';
+            
+            learnedWords.add(interleavedQueue[currentInterleavedIndex].en);
+
+            setTimeout(() => {
+                currentInterleavedIndex++;
+                if (currentInterleavedIndex < interleavedQueue.length) {
+                    loadInterleavedQuiz();
+                } else {
+                    if (blockedSubStep >= 3) {
+                        currentWordIndex++;
+                        if (currentWordIndex < stages[currentStageIndex].words.length) {
+                            blockedSubStep = 0;
+                            showView('blocked-screen');
+                            loadBlockedStep();
+                        } else {
+                            finishStage();
+                        }
+                    }
+                }
+            }, 500);
+        } else {
+            btn.style.borderColor = '#E53E3E';
+            btn.style.background = '#FFF5F5';
+        }
+    }
+
+    function checkBlockedWordCompletion() {
+        if (blockedSubStep >= 3) {
+            currentWordIndex++;
+            if (currentWordIndex < stages[currentStageIndex].words.length) {
+                blockedSubStep = 0;
+                loadBlockedStep();
+            } else {
+                startInterleavedPhase();
+            }
+        }
+    }
+
+    const origLoadBlockedStep = loadBlockedStep;
+    loadBlockedStep = function() {
+        if (blockedSubStep >= 3) {
+            checkBlockedWordCompletion();
+            return;
+        }
+        origLoadBlockedStep();
+    };
+
+    function finishStage() {
+        stageStars[currentStageIndex] = 3;
+        updateHeader();
+        document.getElementById('reward-modal').style.display = 'flex';
+    }
+
+    function closeRewardModal() {
+        document.getElementById('reward-modal').style.display = 'none';
+        showView('title-screen');
+    }
+
+    function showStickerBook() {
+        showView('sticker-screen');
+        const grid = document.getElementById('sticker-grid');
+        grid.innerHTML = '';
+
+        stages.forEach(stage => {
+            stage.words.forEach(word => {
+                const slot = document.createElement('div');
+                const isUnlocked = learnedWords.has(word.en);
+                slot.className = `sticker-slot ${isUnlocked ? 'unlocked' : ''}`;
+                slot.innerText = word.emoji;
+                slot.title = isUnlocked ? `${word.en} (${word.kr})` : "미해금";
+                grid.appendChild(slot);
+            });
+        });
+    }
+
+    updateHeader();
+</script>
+</body>
+</html>
